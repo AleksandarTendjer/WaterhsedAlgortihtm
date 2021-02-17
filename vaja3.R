@@ -52,9 +52,14 @@
         }
       return(res)
     }
-    function<-gradient_calculation(img,kernel){
-      eroded_Img=
-        
+   gradient_calculation <-function(img,kernel){
+      res=matrix(0L, nrow =  dim(img)[1], ncol = dim(img)[2]) 
+      eroded_Img=erosion(img,kernel)
+      dilated_Img=dilation(img,kernel)
+      res=dilated_Img-eroded_Img
+      
+      
+      return(res)  
     }
     
     ### Load packages
@@ -65,7 +70,7 @@
     #library that can represent images for people with low eye sight
     library(viridis)
     library(rasterVis)
-    library(imager)
+    library(png)
     
     
     
@@ -74,6 +79,19 @@
     img_name="primer1.jpg"
     imgOrig=raster(readGDAL(img_name))
     imgInput=raster::as.matrix(imgOrig)
+    res=matrix(0L, nrow =  dim(imgInput)[1], ncol = dim(imgInput)[2]) 
+    kernel=3
+    
+    
+    calculated_gradient=gradient_calculation(imgInput,kernel)
+    writePNG(res,"gradient_out.png")
+
+    calculated_gradient=raster(res)
+    raster::plot(calculated_gradient)
+    raster::writeRaster(calculated_gradient, filename = "gradient_out", format="GTiff")
+
+    
+    
     
     
     
